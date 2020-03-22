@@ -2,7 +2,6 @@ package com.hww.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author heweiwei@hztianque.com

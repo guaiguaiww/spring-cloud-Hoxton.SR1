@@ -1,6 +1,8 @@
 package com.hww.controller;
 
 import com.hww.service.PaymentService;
+import com.hww.service.PaymentServiceBack;
+import com.hww.service.PaymentServiceFuse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,13 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+
+    @Autowired
+    private PaymentServiceFuse paymentServiceFuse;
+
+    @Autowired
+    private PaymentServiceBack paymentServiceBack;
+
     @Value("${server.port}")
     private String port;
 
@@ -32,13 +41,18 @@ public class PaymentController {
 
     @GetMapping("payment/hystrix/timeout/{id}")
     public String paymentInfo_timeout(@PathVariable("id") Integer id) {
-        return paymentService.paymentInfo_timeout(id);
+        return paymentServiceBack.paymentInfo_timeout(id);
 
     }
 
     @GetMapping("payment/hystrix/exception/{id}")
     public String paymentInfo_exception(@PathVariable("id") Integer id) {
-        return paymentService.paymentInfo_exception(id);
+        return paymentServiceBack.paymentInfo_exception(id);
 
+    }
+
+    @GetMapping("payment/hystrix/paymentCircuitBreaker/{id}")
+    public String paymentCircuitBreaker(@PathVariable("id") Integer id) {
+       return paymentServiceFuse.paymentCircuitBreaker(id);
     }
 }

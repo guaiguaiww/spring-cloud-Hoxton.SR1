@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author heweiwei@hztianque.com
  * @date 2020/3/21-19:02
- * @Description:
+ * @Description: 服务降级
  */
 @Service
 public class PaymentServiceBack {
@@ -26,7 +26,7 @@ public class PaymentServiceBack {
      * @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")-3s超时，触发服务降级
      */
     @HystrixCommand(fallbackMethod = "paymentInfo_timeout_handler", commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000")
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
     })
     public String paymentInfo_timeout(Integer id) {
         try {
