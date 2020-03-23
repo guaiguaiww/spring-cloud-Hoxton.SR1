@@ -33,7 +33,6 @@ public class PaymentController {
     @PostMapping(value = "/payment/create")
     public CommonResult create(@RequestBody Payment payment) {
         int result = paymentService.create(payment);
-
         if (result > 0) {
             return new CommonResult<>(200, "created-successfully,service-port:" + port, result);
         } else {
@@ -44,7 +43,6 @@ public class PaymentController {
     @GetMapping(value = "/payment/get/{id}")
     public CommonResult<Payment> getPayment(@PathVariable("id") Long id) {
         Payment payment = paymentService.getPaymentById(id);
-
         if (null != payment) {
             return new CommonResult<>(200, "get-successfully,service-port:" + port, payment);
         } else {

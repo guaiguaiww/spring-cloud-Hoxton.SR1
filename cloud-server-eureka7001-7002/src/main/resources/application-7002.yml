@@ -8,8 +8,8 @@ eureka:
     fetch-registry: false #false 表示自己就是注册中心，职责就是维护服务实例，不需要去检索服务
     service-url:
       defaultZone: http://eureka7001.com:7001/eureka/ #设置Eureka-server交互地址的查询服务和注册服务地址
-      #defaultZone: http://${eureka.instance.hostname}:${service.port}/eureka/
+      #defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
-    enable-self-preservation: true #关闭自我保护机制
+    enable-self-preservation: true #自我保护机制
     eviction-interval-timer-in-ms: 60000  #发送心跳时间
 

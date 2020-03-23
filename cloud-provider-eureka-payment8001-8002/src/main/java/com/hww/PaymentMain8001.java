@@ -9,8 +9,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * @author heweiwei@hztianque.com
  * @date 2020/3/14-23:44
  * @Description:
- * @EnableEurekaClient:开启Eureka-Client
- * @EnableDiscoveryClient:开启服务发现
+ *  @EnableEurekaClient : 开启Eureka-Client
+ *  @EnableDiscoveryClient : 开启服务发现
  */
 @EnableDiscoveryClient
 @EnableEurekaClient

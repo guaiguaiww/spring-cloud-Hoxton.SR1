@@ -85,7 +85,7 @@ WeightedResponseTimeRule:加权策略 ，在轮询的基础上，计算响应速
 BestAvailableRule:请求数最少策略，过滤掉不能被请求的服务，然后选择一个并发数最小的服务
 轮询算法讲解：接口的请求次数%集群的数量==实际调用的服务器下标，然后从服务实例列表集合索引出服务器地址，每次服务器重启，从新开始                       
    
-#OpenFeign
+#OpenFeign   github地址：https://github.com/spring-cloud/spring-cloud-openfeign
 开发微服务，免不了需要服务间调用。Spring Cloud框架提供了RestTemplate和OpenFeign两个方式完成服务间调用 .
 使用OpenFeign只需要创建一个接口加上对应的注解(@FeignClient(value = "CLOUD-PAYMENT-SERVICE-EUREKA") )即可完成远程的服务调用  
 1）远程调用：可结合ribbon实现负载均衡的能力
@@ -101,10 +101,44 @@ Hystrix是一个处理分布式系统的延迟和容错的开源库，在分布�
 hystrix可以做：服务降级，服务熔断，接近实时的监控.
 
 概念：
-1）服务降级： fallback   :服务器繁忙，请稍后重试，不让客户端等待，并且立刻返回一个友好提示。触发原因：程序异常，超时，服务熔断触发服务降级，线程池满
+1）服务降级：fallback    : 服务器繁忙，请稍后重试，不让客户端等待，并且立刻返回一个友好提示。触发原因：程序异常，超时，服务熔断触发服务降级，线程池满
 2) 服务熔断：break       ：达到最大阈值后，直接拒绝访问，然后调用服务降级的方法并且返回友好提示。   服务降级--达到阈值->服务熔断--5s后半开状态允许进入一个请求-->恢复链路调用 出现情况：当服务调用失败进入降级后再达到阈值，默认是5秒20次调用失败，触发熔断机制
 3）服务限流: flowlimit   ：秒杀高并发等操作，严禁一窝蜂过来拥挤，大家排队，一秒钟N个，有序进行
 处理：
+#Spring Cloud Gateway--服务网关，替换了netflix的zuul 官网：https://cloud.spring.io/spring-cloud-static/Hoxton.SR1/reference/htmlsingle/#spring-cloud-gateway    
+一、Spring Cloud Gateway 与Zuul1的区别：
+Zuul1：使用java写的基于servlet规范使用同步阻塞式io模型，每次i/o操作都是从工作线程中选择一个执行，请求线程被阻塞直到工作线程完成(nginx类似)。
+Spring Cloud Gateway 是基于spring5,SpringBoot2.x,WebFlux框架实现的，而WebFlux框架底层则使用了高性能的Reactor模式的通信框架netty。是异步非阻塞的i/模型，还支持WebSocket
+二、servlet生命周期：
+  1)初始化：当Servlet容器(Tomcat)启动时，容器查找一个配置文件web.xml，这个文件中记录了可以提供服务的Servlet，Servlet容器将调用每个Servlet的init方法来实例化每个Servlet。(<load-on-startup>1</load-on-startup>)
+  如果初始化失败，执行init()方法抛出ServletException异常，Servlet对象将会被垃圾回收器回收，当客户端第一次访问服务器时加载Servlet实现类，创建对象并执行初始化方法。
+  注释：servelt是否在容器启动立即加载可由<load-on-startup>整数</load-on-startup>配置，如果该元素的值为负数或者没有设置，则容器会当Servlet被请求时再加载，如果值为正整数或者0时，表示容器在应用启动时就加载并初始化这个servlet，值越小，servlet的优先级越高，就越先被加载
+  2)调用service:当容器收到请求，就会为每个请求分配一个线程(从线程池中取出空闲线程)然后调用Servlet的service()方法处理请求
+  3)容器关闭时调用Servlet的destroy()方法销毁Servlet。
+  注释：Servlet3.1之前是采用同步阻塞的网络i/o模型，遇见高并发的时候，线程数量上涨，导致内存消耗大，上下文不断切换，严重影响性能。另外SpringMVC也是基于ServletApi和封装Servlet开发的，是同步阻塞的IO模型。
+三、Spring Cloud Gateway的执行流程：
 
+请求--------->NettyServer---------->Predicate-------------->Filter------------>NettyClient----------->服务  （NettyServer--->NettyClient：就是WebFlux）
 
-
+四、Gateway的动态路由
+默认情况下Gateway会根据注册中心注册的服务列表，以微服务名称为路径创建动态路由进行转发，从而实现动态路由的功能。
+五、断言工厂  Route Predicate Factories --规则进行匹配，true则进行路由
+1)After 
+       predicates:
+         - After=2017-01-20T17:42:47.789-07:00[America/Denver]
+2)Before
+       predicates:
+         - Before=2017-01-20T17:42:47.789-07:00[America/Denver]
+3)Between
+       predicates:
+         - Between=2017-01-20T17:42:47.789-07:00[America/Denver], 2017-01-21T17:42:47.789-07:00[America/Denver]   
+4)Cookie
+       predicates:
+          - Cookie=username,hww
+5)Header
+       predicates:
+          - Cookie=username,hww          
+六、网关过滤器工厂  GatewayFilter Factories    可用于修改进入的HTTP请求和返回的Http响应，路由过滤器只能指定路由进行使用   
+具体见官网，有常用过滤器，全局过滤器，自定义过滤器
+实现自定义过滤器：cloud-gateway9527.com.hww.filter.SelfFilter
+  

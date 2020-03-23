@@ -3,7 +3,6 @@ package com.hww.service;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.TimeUnit;
 
 /**

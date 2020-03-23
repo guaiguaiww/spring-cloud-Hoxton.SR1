@@ -21,6 +21,7 @@
         <module>cloud-provider-eureka-hystrix-payment8001</module>
         <module>cloud-consumer-eureka-hystrix-order80</module>
         <module>cloud-consumer-eureka-feign-hystrix-dashboard-9001</module>
+        <module>cloud-gateway9527</module>
     </modules>
 
     <name>spring-cloud-Hoxton.SR1</name>
