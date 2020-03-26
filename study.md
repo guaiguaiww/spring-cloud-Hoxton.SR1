@@ -1,7 +1,8 @@
 #springCloud==分步式微服务架构的一站式解决方案，微服务架构技术的集合体。
-包括(服务注册与发现，服务调用，服务熔断，负载均衡，服务降级，服务消息队列，配置中心管理，服务网关，服务监控，全链路追踪，自动化构建部署，服务定时任务)
-
+包括(服务注册与发现，服务调用，服务熔断，服务降级,负载均衡，服务消息队列，配置中心管理，服务网关，服务监控，全链路追踪，自动化构建部署，服务定时任务)
 查看springcloud-springboot对应版本的问题。https://start.spring.io/actuator/info
+##########################                    SpringCloud for alibaba             ##############################################
+
 
 #Eureka介绍  github:https://github.com/Netflix/eureka
 1、Eureka概念：
@@ -85,14 +86,14 @@ WeightedResponseTimeRule:加权策略 ，在轮询的基础上，计算响应速
 BestAvailableRule:请求数最少策略，过滤掉不能被请求的服务，然后选择一个并发数最小的服务
 轮询算法讲解：接口的请求次数%集群的数量==实际调用的服务器下标，然后从服务实例列表集合索引出服务器地址，每次服务器重启，从新开始                       
    
-#OpenFeign   github地址：https://github.com/spring-cloud/spring-cloud-openfeign
+#OpenFeign   服务调用  github地址：https://github.com/spring-cloud/spring-cloud-openfeign
 开发微服务，免不了需要服务间调用。Spring Cloud框架提供了RestTemplate和OpenFeign两个方式完成服务间调用 .
 使用OpenFeign只需要创建一个接口加上对应的注解(@FeignClient(value = "CLOUD-PAYMENT-SERVICE-EUREKA") )即可完成远程的服务调用  
 1）远程调用：可结合ribbon实现负载均衡的能力
 2）超时控制：OpenFeign的客户端默认等待服务1s，如果超过这个时间，直接返回报错
 3) 日志打印：先注入Logger.Level ，再在配置文件配置，日志打印的类，和级别
 
-#hystrix github:https://github.com/Netflix/Hystrix/wiki
+#hystrix  服务降级/熔断/隔离  github:https://github.com/Netflix/Hystrix/wiki
 在微服务架构中，根据业务来拆分成一个个的服务，服务与服务之间可以相互调用（RPC） 。为了保证其高可用，单个服务通常会集群部署。
 由于网络原因或者自身的原因，服务并不能保证100%可用，如果单个服务出现问题，调用这个服务就会出现线程阻塞，此时若有大量的请求涌入，Servlet容器的线程资源会被消耗完毕，导致服务瘫痪。
 服务与服务之间的依赖性，故障会传播，会对整个微服务系统造成灾难性的严重后果，这就是服务故障的“雪崩”效应.
@@ -141,4 +142,75 @@ Spring Cloud Gateway 是基于spring5,SpringBoot2.x,WebFlux框架实现的，而
 六、网关过滤器工厂  GatewayFilter Factories    可用于修改进入的HTTP请求和返回的Http响应，路由过滤器只能指定路由进行使用   
 具体见官网，有常用过滤器，全局过滤器，自定义过滤器
 实现自定义过滤器：cloud-gateway9527.com.hww.filter.SelfFilter
-  
+
+#服务配置 分布式配置中心 SpringCloud-Config
+产生背景：每一个微服务都有一个application.yml,服务越多，配置修改难度越大，所以config提供了集中的，动态的的配置管理
+介绍：分为服务端和客户端俩部分，服务端称为分布式配置中心，他是一个独立的服务，用来配置服务器提供配置信息的获取 ，加密、解密等信息访问接口，默认采用git来存储配置信息。
+客户端则通过指定的配置中心来管理资源，在启动的时候从配置中心获取和加载配置信息
+ 
+#服务消息总线  SpringCloud-Bus 想要实现分布式自动刷新配置的功能，SpringCloud-Config必须配合SpringCloud-Bus一起使用。Bus支持俩总消息代理：RabbitMq和kafka。
+介绍：SpringCloud-Bus:就是将分布式系统的各个节点与轻量级消息系统(ActiveMq,Kafka,RabbitMq)连接起来的框架，整合了java里面的事件处理机制和消息中间件的功能。
+举例：运维人员手动修改了git仓库的配置，修改信息会同步到cloud-config-server,然后运维人员将修改的消息推送到与Server连接的任一节点，节点将修改信息推送到Bus，Bus通过广播的方式，通知其他节点配置信息的修改
+能干什么：管理和传播分布式系统间的消息，就像一个分布式执行器，可用于广播状态更改，事件推送等，也可以当做微服务间的通信通道。
+什么是消息总线：在微服务的架构系统中，通常会使用轻量级的消息代理来构建一个共用的消息主题，让系统中所有的实例连接起来，由于该主题产生的消息会被所有的的实例监听和消费，所以被称为消息总线
+
+#Spring-Cloud-Stream 消息驱动 屏蔽底层消息中间件的差异，降低切换的成本，统一消息的编程模型
+Spring-Cloud-Stream通过自定义绑定器 Binder 作为中间层负责与mq的交互,我们只需要与SpringCloudStream交互。实现了应用程序与消息中间件细节之间的隔离，
+Stream中的消息通信方式遵循了发布-订阅模式
+
+#SpringCloud Sleuth-链路追踪 
+在微服务框架中，一个客户端发起的请求，在后端系统中会经过多个不同的服务节点调用来协同产生最后的请求结果，每一个前端请求都会形成一条复杂的分布式微服务调用链路，链路中的任何一个出现高延时，错误都会引起整个请求失败。
+SpringCloud Sleuth 提供一套完整的服务跟踪解决方案并且兼容了ZipKin
+
+
+##########################                SpringCloud for alibaba                  ####################################
+特征
+服务限流降级：默认支持 WebServlet、WebFlux, OpenFeign、RestTemplate、Spring Cloud Gateway, Zuul, Dubbo 和 RocketMQ 限流降级功能的接入，可以在运行时通过控制台实时修改限流降级规则，还支持查看限流降级 Metrics 监控。
+服务注册与发现：适配 Spring Cloud 服务注册与发现标准，默认集成了 Ribbon 的支持。
+分布式配置管理：支持分布式系统中的外部化配置，配置更改时自动刷新。
+消息驱动能力：基于 Spring Cloud Stream 为微服务应用构建消息驱动能力。
+分布式事务：使用 @GlobalTransactional 注解， 高效并且对业务零侵入地解决分布式事务问题。。
+阿里云对象存储：阿里云提供的海量、安全、低成本、高可靠的云存储服务。支持在任何应用、任何时间、任何地点存储和访问任意类型的数据。
+分布式任务调度：提供秒级、精准、高可靠、高可用的定时（基于 Cron 表达式）任务调度服务。同时提供分布式的任务执行模型，如网格任务。网格任务支持海量子任务均匀分配到所有 Worker（schedulerx-client）上执行。
+阿里云短信服务：覆盖全球的短信服务，友好、高效、智能的互联化通讯能力，帮助企业迅速搭建客户触达通道。
+SpringCloud-alibaba 包含:Nacos==Eureka+Config+Bus
+
+#nacos 服务的注册与发现   采用和eureka一样的  ap和cp可以切换
+下载G:\学习资料\springcloud\springcloud-alibaba\nacos (nacos-注册中心)启动  默认端口是8848 
+
+provider引入jar:
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+application.yml: 
+        server.port=9001
+        spring.application.name=nacos-provider
+        spring.cloud.nacos.discovery.server-addr=127.0.0.1:8848
+        management.endpoints.web.exposure.include=*
+主程序加上注解：@EnableDiscoveryClient。
+
+启动程序后，provider就可将服务注册进nacos
+
+nacos实现负载均衡的原理是netflix的ribbon在起作用。
+
+#nacos 服务配置
+client引入jar:
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+application.yml: 
+      spring.cloud.nacos.config.server-addr=127.0.0.1:8848  #Nacos服务注册中心地址
+      spring.cloud.nacos.config.file-extension:=yaml    #指定yaml格式的配置
+      spring.cloud.nacos.config.group=DEV_GROUP
+      spring.cloud.nacos.config.namespace=d8f0f5a-6a53-4785-9686-dd460158e5d4
+主程序加上注解：@EnableDiscoveryClient。
+
+controller: @RefreshScope //支持Nacos的动态刷新功能。  原理：也是通过springcloud的原生注解@RefreshScope 实现配置的自动更新。
+在nacos上新建配置的时候，dataId指${spring.application.name}-${spring.profile.active}.${spring.cloud.nacos.config.file-extension}
+nacos默认的命名空间是public,主要用来隔离，比如我们有3个坏境，就可以创建3个命名空间，不同的命名空间是隔离的

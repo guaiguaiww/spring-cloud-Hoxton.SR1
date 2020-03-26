@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,9 +52,8 @@ public class PaymentController {
     }
 
 
-
     @GetMapping(value = "/payment/testAnnotation")
-    public CommonResult<Payment> testAnnotation(Long id,String userName) {
+    public CommonResult<Payment> testAnnotation(Long id, String userName) {
         Payment payment = paymentService.getPaymentById(id);
         if (null != payment) {
             return new CommonResult<>(200, "get-successfully,service-port:" + port, payment);
@@ -64,6 +64,7 @@ public class PaymentController {
 
     /**
      * 配合主程序上面的@EnableDiscoveryClient注解使用
+     *
      * @return
      */
     @GetMapping("/payment/discovery")
@@ -81,18 +82,22 @@ public class PaymentController {
 
     /**
      * 测试OpenFeign的超时控制
+     *
      * @return
      */
 
     @GetMapping("/payment/paymentFeignTimeOut")
-    public String paymentFeignTimeOut(){
+    public String paymentFeignTimeOut() {
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return port;
-
     }
 
+    @GetMapping("/payment/zipkin")
+    public String paymentZipkin() {
+        return "hi ,i'am  server fall back，welcome to hww，O(∩_∩)O哈哈~";
+    }
 }

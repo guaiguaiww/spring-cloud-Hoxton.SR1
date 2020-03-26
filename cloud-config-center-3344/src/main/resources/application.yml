@@ -1,0 +1,33 @@
+server:
+  port: 3344
+
+spring:
+  application:
+    name:  cloud-config-server-3344  #注册进Eureka服务器的微服务名
+  cloud:
+    config:
+      server:
+        git:
+          uri: git@github.com:guaiguaiww/springcloud-config.git #GitHub上面的git仓库名字
+          search-paths:     #搜索目录
+            - springcloud-config
+      label: master     #读取分支
+    stream:
+      kafka:
+        binder:
+          brokers: 192.168.253.134:9092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka #服务注册到eureka地址
+
+
+
+
+# 暴露bus刷新配置的端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "bus-refresh"

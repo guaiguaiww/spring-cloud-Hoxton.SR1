@@ -25,19 +25,18 @@ public class OrderController {
 
     public static final String PAYMENT_URL = "http://CLOUD-PAYMENT-SERVICE-EUREKA";
 
-    @Qualifier("define")
-    @Autowired()
-    private RestTemplate restTemplateDefine;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @GetMapping("/consumer/payment/getPayment/getForObject/{id}")
     public CommonResult<Payment> getForObject(@PathVariable("id") Long id) {
-        CommonResult object = restTemplateDefine.getForObject(PAYMENT_URL + "/payment/get/" + id, CommonResult.class);
+        CommonResult object = restTemplate.getForObject(PAYMENT_URL + "/payment/get/" + id, CommonResult.class);
         return object;
     }
 
     @GetMapping("/consumer/payment/create")
     public CommonResult<Payment> create(Payment payment) {
-        return restTemplateDefine.postForObject(PAYMENT_URL + "/payment/create", payment, CommonResult.class);
+        return restTemplate.postForObject(PAYMENT_URL + "/payment/create", payment, CommonResult.class);
     }
 
     /**
@@ -47,11 +46,17 @@ public class OrderController {
      */
     @GetMapping("/consumer/payment/getPayment/getForEntity/{id}")
     public CommonResult<Payment> getForEntity(@PathVariable("id") Long id) {
-        ResponseEntity<CommonResult> responseEntity = restTemplateDefine.getForEntity(PAYMENT_URL + "/payment/get/" + id, CommonResult.class);
+        ResponseEntity<CommonResult> responseEntity = restTemplate.getForEntity(PAYMENT_URL + "/payment/get/" + id, CommonResult.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         } else {
             return new CommonResult<>(444, "操作失败");
         }
+    }
+
+    @GetMapping("/consumer/payment/zipkin")
+    public String paymentZipkin() {
+        String result = restTemplate.getForObject(PAYMENT_URL + "/payment/zipkin/", String.class);
+        return result;
     }
 }

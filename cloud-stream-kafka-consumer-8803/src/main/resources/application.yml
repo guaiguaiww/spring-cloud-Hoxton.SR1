@@ -1,0 +1,38 @@
+server:
+  port: 8803
+
+spring:
+  application:
+    name: cloud-stream-kafka-consumer-2
+  cloud:
+      stream:
+        kafka:
+         binder:
+           brokers: 192.168.253.134:9092
+           auto-create-topics: true
+           auto-add-partitions: true
+        bindings:
+          input:                            #这个名字是一个通道的名称
+           destination: stream-kafka-demo   #表示要使用的队列名称名称
+           group: group1                    #消费组:每个分区只能由同一个消费组内的一个consumer来消费,8802想要消费，group名称必须不同，如果不配置，采用默认，会造成消息丢失问题
+           consumer:                        #具体配置：ConsumerProperties
+             autoCommitOffset: false
+             concurrency: 1
+             partitioned: false
+
+eureka:
+  client: # 客户端进行Eureka注册的配置
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 30 # 设置心跳的时间间隔（默认是30秒）
+    lease-expiration-duration-in-seconds: 90 # 如果现在超过了5秒的间隔（默认是90秒）
+    instance-id: receive-8803.com  # 在信息列表时显示主机名称
+    prefer-ip-address: true     # 访问的路径变为IP地址
+
+
+
+
+
+
+

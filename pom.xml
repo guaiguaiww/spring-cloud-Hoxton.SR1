@@ -22,6 +22,15 @@
         <module>cloud-consumer-eureka-hystrix-order80</module>
         <module>cloud-consumer-eureka-feign-hystrix-dashboard-9001</module>
         <module>cloud-gateway9527</module>
+        <module>cloud-config-center-3344</module>
+        <module>cloud-config-client-3355</module>
+        <module>cloud-config-client-3366</module>
+        <module>cloud-stream-kafka-provider-8801</module>
+        <module>cloud-stream-kafka-consumer-8802</module>
+        <module>cloud-stream-kafka-consumer-8803</module>
+        <module>cloudalibaba-provider-nacos-payment-900x</module>
+        <module>cloudalibaba-consumer-nacos-order83</module>
+        <module>cloud-config-nacos-client-3377</module>
     </modules>
 
     <name>spring-cloud-Hoxton.SR1</name>
