@@ -174,8 +174,7 @@ SpringCloud Sleuth 提供一套完整的服务跟踪解决方案并且兼容了Z
 分布式任务调度：提供秒级、精准、高可靠、高可用的定时（基于 Cron 表达式）任务调度服务。同时提供分布式的任务执行模型，如网格任务。网格任务支持海量子任务均匀分配到所有 Worker（schedulerx-client）上执行。
 阿里云短信服务：覆盖全球的短信服务，友好、高效、智能的互联化通讯能力，帮助企业迅速搭建客户触达通道。
 SpringCloud-alibaba 包含:Nacos==Eureka+Config+Bus
-
-#nacos 服务的注册与发现   采用和eureka一样的  ap和cp可以切换
+#springcloud-alibaba-nacos 服务的注册与发现   采用和eureka一样的  ap和cp可以切换
 下载G:\学习资料\springcloud\springcloud-alibaba\nacos (nacos-注册中心)启动  默认端口是8848 
 
 provider引入jar:
@@ -195,6 +194,7 @@ application.yml:
 nacos实现负载均衡的原理是netflix的ribbon在起作用。
 
 #nacos 服务配置
+一、使用：
 client引入jar:
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -212,5 +212,19 @@ application.yml:
 主程序加上注解：@EnableDiscoveryClient。
 
 controller: @RefreshScope //支持Nacos的动态刷新功能。  原理：也是通过springcloud的原生注解@RefreshScope 实现配置的自动更新。
-在nacos上新建配置的时候，dataId指${spring.application.name}-${spring.profile.active}.${spring.cloud.nacos.config.file-extension}
-nacos默认的命名空间是public,主要用来隔离，比如我们有3个坏境，就可以创建3个命名空间，不同的命名空间是隔离的
+注释:在nacos上新建配置的时候，dataId指${spring.application.name}-${spring.profile.active}.${spring.cloud.nacos.config.file-extension}
+二、nacos持久化
+nacos默认是使用内存数据derby。切换mysql数据库
+1.首先执行sql:G:\学习资料\springcloud\springcloud-alibaba\nacos\conf\nacos-mysql.sql
+2.修改配置文件：G:\学习资料\springcloud\springcloud-alibaba\nacos\conf\application.properties:
+spring.datasource.platform=mysql
+db.url.0=jdbc:mysql://127.0.0.1:3306/spring-cloud?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+db.user=root
+db.password=root
+#Springcloud-alibaba-Sentinel 分布式系统的流量防卫兵 github:https://github.com/alibaba/Sentinel
+一、介绍
+Sentinel: 提供流量控制、熔断降级、系统负载保护
+具体见文档
+
+
+
