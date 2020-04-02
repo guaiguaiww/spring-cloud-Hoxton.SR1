@@ -35,6 +35,9 @@
         <module>cloudalibaba-nacos-sentinel-feign-ribbon-payment9003</module>
         <module>cloudalibaba-nacos-sentinel-feign-ribbon-payment9004</module>
         <module>cloudalibaba-nacos-sentinel-feign-ribbon-order84</module>
+        <module>seata-order-service-2001</module>
+        <module>seata-storage-service2002</module>
+        <module>seata-account-service2003</module>
     </modules>
 
     <name>spring-cloud-Hoxton.SR1</name>
